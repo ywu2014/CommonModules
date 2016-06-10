@@ -92,8 +92,8 @@ public class DefaultEntityGenerator implements CodeGenerator {
 			
 			//类声明
 			bw.newLine();
-			if (null != config.getBeanExtends() && config.getBeanExtends().length() > 0) {
-				bw.write("public class " + beanName + " extends " + config.getBeanExtends() + " {");
+			if (null != config.getBeanExtends() && config.getBeanExtends().trim().length() > 0) {
+				bw.write("public class " + beanName + " extends " + config.getBeanExtends().trim() + " {");
 			} else {
 				bw.write("public class " + beanName + " implements Serializable {");
 				bw.newLine();

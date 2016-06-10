@@ -22,11 +22,13 @@ public class MybatisModuleAutoGeneratorTest {
 			.setLicense("Apache License 2.0")
 			.setGenerateBean(true)
 			.setBeanPackage("com.jiangnan.bean")
-			//.setIncludeTables("test1_person")
+			.setIncludeTables("test1_person")
 			.setSaveDir("d:/test")
 			//.setExcludeFields("id")
 			;
 		MybatisModuleAutoGenerator generator = new MybatisModuleAutoGenerator("com.eashshop.order.mapper");
+		//generator.setMapperExtendsClass("BaseMapper<{0}>");
+		//generator.setMapperExtendsClassPackage("org.common.module.mybatis.mapper");
 		generator.generate(config);
 	}
 }

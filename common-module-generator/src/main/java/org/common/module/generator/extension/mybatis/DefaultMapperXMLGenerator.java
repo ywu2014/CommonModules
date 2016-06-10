@@ -73,6 +73,7 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 			//结束元素
 			bw.newLine();
 			bw.write("</mapper>");
+			bw.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
