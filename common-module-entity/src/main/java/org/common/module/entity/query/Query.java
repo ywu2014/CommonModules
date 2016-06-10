@@ -4,7 +4,9 @@
 package org.common.module.entity.query;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p> 查询参数对象
@@ -28,6 +30,8 @@ public class Query<T> {
 	 * 参数对象,可以是实体或Map
 	 */
 	private T params;
+	
+	private Map<String, String> orderBy = null;
 	
 	/**
 	 * 获取查询字段
@@ -124,6 +128,27 @@ public class Query<T> {
 	public Query<T> setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 		return this;
+	}
+	
+	/**
+	 * 添加排序字段
+	 * @param column
+	 * @param asc
+	 * @return
+	 */
+	public Query<T> orderBy(String column, boolean asc) {
+		if (null == this.orderBy) {
+			this.orderBy = new LinkedHashMap<String, String>(3);
+		}
+		this.orderBy.put(column, asc ? "ASC" : "DESC");
+		return this;
+	}
+	/**
+	 * 获取排序字段
+	 * @return
+	 */
+	public Map<String, String> getOrderBy() {
+		return orderBy;
 	}
 	
 }

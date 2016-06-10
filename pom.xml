@@ -8,6 +8,7 @@
   <modules>
     <module>common-module-mybatis</module>
     <module>common-module-entity</module>
+    <module>common-module-generator</module>
   </modules>
   
   <properties>
