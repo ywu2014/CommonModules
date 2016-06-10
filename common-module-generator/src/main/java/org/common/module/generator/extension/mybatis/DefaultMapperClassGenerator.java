@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 
 import org.common.module.generator.Config;
+import org.common.module.generator.code.CodeGenerateUtil;
 import org.common.module.generator.code.CodeGenerator;
 import org.common.module.generator.db.Table;
 
@@ -52,17 +53,11 @@ public class DefaultMapperClassGenerator implements CodeGenerator {
 			if (!beanDir.exists()) {
 				beanDir.mkdirs();
 			}
-			File file = new File(beanDir, beanName + ".java");
+			File file = new File(beanDir, beanName + this.mapperClassSuffix + ".java");
 			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "utf-8"));
 			
 			//版权声明
-			if (null != config.getLicense() && config.getLicense().length() > 0) {
-				bw.write("/**");
-				bw.newLine();
-				bw.write(" * " + config.getLicense());
-				bw.newLine();
-				bw.write(" */");
-			}
+			CodeGenerateUtil.generateLicence(config, bw);
 			
 			//包名
 			bw.newLine();
@@ -71,24 +66,18 @@ public class DefaultMapperClassGenerator implements CodeGenerator {
 			//继承接口所在包
 			if (null != this.mapperExtendsClassPackage && !"".equals(this.mapperExtendsClassPackage.trim())) {
 				bw.newLine();
-				bw.write("import " + this.mapperExtendsClassPackage + ";");
+				String extendClass = this.mapperExtendsClass.substring(0, this.mapperExtendsClass.indexOf("<")).trim();
+				bw.write("import " + this.mapperExtendsClassPackage.trim() + "." + extendClass + ";");
 			}
-			boolean generic = isGeneric(this.mapperExtendsClass);
+			//泛型类所在包
+			boolean generic = CodeGenerateUtil.isGeneric(this.mapperExtendsClass);
 			if (generic) {
 				bw.newLine();
-				String extendClass = this.mapperExtendsClass.substring(0, this.mapperExtendsClass.indexOf("<"));
-				bw.write("import " + config.getBeanPackage() + "." + table.getEntityName() + "." + extendClass + ";");
+				bw.write("import " + config.getBeanPackage() + "." + table.getEntityName() + ";");
 			}
 			
 			//类注释
-			if (null != table.getComments() && table.getComments().length() > 0) {
-				bw.newLine();
-				bw.write("/**");
-				bw.newLine();
-				bw.write(" * " + table.getComments());
-				bw.newLine();
-				bw.write(" */");
-			}
+			CodeGenerateUtil.generateClassNotes(table, bw);
 			
 			//类声明
 			bw.newLine();
@@ -188,17 +177,5 @@ public class DefaultMapperClassGenerator implements CodeGenerator {
 	public void setMapperExtendsClassPackage(String mapperExtendsClassPackage) {
 		this.mapperExtendsClassPackage = mapperExtendsClassPackage;
 	}
-	/**
-	 * mapper继承的是否是泛型父接口
-	 * @param mapperExtendsClass
-	 * @return
-	 */
-	private boolean isGeneric(String mapperExtendsClass) {
-		if (null != this.mapperExtendsClass && this.mapperExtendsClass.trim().length() > 0) {
-			if (mapperExtendsClass.contains("<")) {
-				return true;
-			}
-		}
-		return false;
-	}
+	
 }

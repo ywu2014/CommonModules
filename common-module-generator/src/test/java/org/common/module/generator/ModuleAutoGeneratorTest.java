@@ -3,15 +3,14 @@
  */
 package org.common.module.generator;
 
-import org.common.module.generator.extension.mybatis.MybatisModuleAutoGenerator;
 import org.junit.Test;
 
 /**
- * <p> mybatis生成器测试
+ * <p> 模块生成器测试
  * @author yejunwu123@gmail.com
- * @since 2016年6月10日 下午1:37:42
+ * @since 2016年6月10日 下午9:32:40
  */
-public class MybatisModuleAutoGeneratorTest {
+public class ModuleAutoGeneratorTest {
 	@Test
 	public void testGenerate() {
 		Config config = new Config();
@@ -24,11 +23,15 @@ public class MybatisModuleAutoGeneratorTest {
 			.setBeanPackage("com.jiangnan.bean")
 			.setIncludeTables("test1_person")
 			.setSaveDir("d:/test")
+			.setGenerateService(true)
+			.setServicePackage("com.jiangnan.product.service")
+			.setServiceExtendClass("BaseService<{0}>")
+			.setServiceExtendClassPackage("org.common.module.mybatis.service")
+			.setServiceImplExtendClass("BaseServiceImpl<{0}>")
+			.setServiceImplExtendClassPackage("org.common.module.mybatis.service.impl")
 			//.setExcludeFields("id")
 			;
-		MybatisModuleAutoGenerator generator = new MybatisModuleAutoGenerator("com.eashshop.order.mapper");
-		generator.setMapperExtendsClass("BaseMapper<{0}>");
-		generator.setMapperExtendsClassPackage("org.common.module.mybatis.mapper");
+		ModuleAutoGenerator generator = new ModuleAutoGenerator();
 		generator.generate(config);
 	}
 }

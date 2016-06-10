@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.common.module.generator.Config;
+import org.common.module.generator.code.CodeGenerateUtil;
 import org.common.module.generator.code.CodeGenerator;
 import org.common.module.generator.db.Column;
 import org.common.module.generator.db.Table;
@@ -42,13 +43,7 @@ public class DefaultEntityGenerator implements CodeGenerator {
 			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "utf-8"));
 			
 			//版权声明
-			if (null != config.getLicense() && config.getLicense().length() > 0) {
-				bw.write("/**");
-				bw.newLine();
-				bw.write(" * " + config.getLicense());
-				bw.newLine();
-				bw.write(" */");
-			}
+			CodeGenerateUtil.generateLicence(config, bw);
 			
 			//包名
 			bw.newLine();
@@ -81,14 +76,7 @@ public class DefaultEntityGenerator implements CodeGenerator {
 			}
 			
 			//类注释
-			if (null != table.getComments() && table.getComments().length() > 0) {
-				bw.newLine();
-				bw.write("/**");
-				bw.newLine();
-				bw.write(" * " + table.getComments());
-				bw.newLine();
-				bw.write(" */");
-			}
+			CodeGenerateUtil.generateClassNotes(table, bw);
 			
 			//类声明
 			bw.newLine();

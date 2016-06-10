@@ -54,6 +54,22 @@ public class Config {
 	private String servicePackage;
 	/**service生成器,默认为DefaultServiceGenerator*/
 	private CodeGenerator serviceGenerator;
+	/**业务层继承的接口*/
+	private String serviceExtendClass;
+	/**业务层继承的接口所在包*/
+	private String serviceExtendClassPackage;
+	/**业务层实现类继承的类*/
+	private String serviceImplExtendClass;
+	/**业务层实现继承的类所在包*/
+	private String serviceImplExtendClassPackage;
+	/**
+	 * 业务接口后缀,eg:UserService,则suffix为Service,默认为Service
+	 */
+	private String serviceSuffix;
+	/**
+	 * 业务实现类后缀,eg:UserServiceImpl,则suffix为Impl,默认为Impl
+	 */
+	private String serviceImplSuffix;
 	
 	/**版权声明*/
 	private String license;
@@ -281,6 +297,99 @@ public class Config {
 	/**设置service生成器,默认为DefaultServiceGenerator*/
 	public Config setServiceGenerator(CodeGenerator serviceGenerator) {
 		this.serviceGenerator = serviceGenerator;
+		return this;
+	}
+	/**
+	 * 业务接口后缀,eg:UserService,则suffix为Service,默认为Service
+	 * @return
+	 */
+	public String getServiceSuffix() {
+		return serviceSuffix;
+	}
+	/**
+	 * 业务接口后缀,eg:UserService,则suffix为Service,默认为Service
+	 * @param serviceSuffix
+	 */
+	public Config setServiceSuffix(String serviceSuffix) {
+		this.serviceSuffix = serviceSuffix;
+		return this;
+	}
+	/**
+	 * 业务实现类后缀,eg:UserServiceImpl,则suffix为Impl,默认为Impl
+	 * @return
+	 */
+	public String getServiceImplSuffix() {
+		return serviceImplSuffix;
+	}
+	/**
+	 * 业务实现类后缀,eg:UserServiceImpl,则suffix为Impl,默认为Impl
+	 * @param serviceImplSuffix
+	 */
+	public Config setServiceImplSuffix(String serviceImplSuffix) {
+		this.serviceImplSuffix = serviceImplSuffix;
+		return this;
+	}
+	/**
+	 * 业务层继承的接口
+	 * @return
+	 */
+	public String getServiceExtendClass() {
+		return serviceExtendClass;
+	}
+	/**
+	 * 业务层继承的接口
+	 * @param serviceExtendClass
+	 * @return
+	 */
+	public Config setServiceExtendClass(String serviceExtendClass) {
+		this.serviceExtendClass = serviceExtendClass;
+		return this;
+	}
+	/**
+	 * 业务层继承的接口所在包
+	 * @return
+	 */
+	public String getServiceExtendClassPackage() {
+		return serviceExtendClassPackage;
+	}
+	/**
+	 * 业务层继承的接口所在包
+	 * @param serviceExtendClassPackage
+	 * @return
+	 */
+	public Config setServiceExtendClassPackage(String serviceExtendClassPackage) {
+		this.serviceExtendClassPackage = serviceExtendClassPackage;
+		return this;
+	}
+	/**
+	 * 业务层实现类继承的类
+	 * @return
+	 */
+	public String getServiceImplExtendClass() {
+		return serviceImplExtendClass;
+	}
+	/**
+	 * 业务层实现类继承的类
+	 * @param serviceImplExtendClass
+	 */
+	public Config setServiceImplExtendClass(String serviceImplExtendClass) {
+		this.serviceImplExtendClass = serviceImplExtendClass;
+		return this;
+	}
+	/**
+	 * 业务层实现继承的类所在包
+	 * @return
+	 */
+	public String getServiceImplExtendClassPackage() {
+		return serviceImplExtendClassPackage;
+	}
+	/**
+	 * 业务层实现继承的类所在包
+	 * @param serviceImplExtendClassPackage
+	 */
+	public Config setServiceImplExtendClassPackage(
+			String serviceImplExtendClassPackage) {
+		this.serviceImplExtendClassPackage = serviceImplExtendClassPackage;
 		return this;
 	}
 	
