@@ -17,7 +17,7 @@ public class ModuleAutoGeneratorTest {
 		config.setDriverClass("com.mysql.jdbc.Driver")
 			.setUsername("root")
 			.setPassword("passw0rd")
-			.setUrl("jdbc:mysql://127.0.0.1:3306/test")
+			.setUrl("jdbc:mysql://127.0.0.1:3306/easy_shop")
 			.setLicense("Apache License 2.0")
 			.setGenerateBean(true)
 			.setBeanPackage("com.jiangnan.bean")

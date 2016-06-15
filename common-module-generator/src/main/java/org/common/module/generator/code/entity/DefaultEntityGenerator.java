@@ -50,8 +50,14 @@ public class DefaultEntityGenerator implements CodeGenerator {
 			bw.write("package " + config.getBeanPackage() + ";");
 			bw.newLine();
 			bw.newLine();
-			if (null == config.getBeanExtends() || "".equals(config.getBeanExtends().trim())) {
-				bw.write("import java.io.Serializable;");
+			if (config.isBeanSerialize()) {
+				if (null == config.getBeanExtends() || "".equals(config.getBeanExtends().trim())) {
+					bw.write("import java.io.Serializable;");
+					bw.newLine();
+				}
+			}
+			if (null != config.getBeanExtendsPackage() && !"".equals(config.getBeanExtendsPackage().trim())) {
+				bw.write("import " + config.getBeanExtendsPackage().trim() + "." + config.getBeanExtends().trim() + ";");
 				bw.newLine();
 			}
 			
@@ -84,6 +90,9 @@ public class DefaultEntityGenerator implements CodeGenerator {
 				bw.write("public class " + beanName + " extends " + config.getBeanExtends().trim() + " {");
 			} else {
 				bw.write("public class " + beanName + " implements Serializable {");
+			}
+			
+			if (config.isBeanSerialize()) {
 				bw.newLine();
 				bw.write("\tprivate static final long serialVersionUID = 1L;");
 			}
@@ -93,6 +102,14 @@ public class DefaultEntityGenerator implements CodeGenerator {
 				Column column = columns.get(i);
 				String fieldName = getFieldName(column);
 				column.setFieldName(fieldName);
+				
+				//过滤不需要的field
+				if (null != config.getExcludeFields() && !config.getExcludeFields().isEmpty()) {
+					if (config.getExcludeFields().contains(column.getName())) {	//过滤不需要的列
+						continue;
+					}
+				}
+				
 				String fieldType = fieldTypes.get(i);
 				String comments = column.getComment();
 				bw.newLine();
@@ -108,8 +125,15 @@ public class DefaultEntityGenerator implements CodeGenerator {
 			
 			//get set方法
 			for (int i = 0; i < columns.size(); i++) {
+				Column column = columns.get(i);
+				//过滤不需要的field
+				if (null != config.getExcludeFields() && !config.getExcludeFields().isEmpty()) {
+					if (config.getExcludeFields().contains(column.getName())) {	//过滤不需要的列
+						continue;
+					}
+				}
 				String tempType = fieldTypes.get(i);
-				String tempField = getFieldName(columns.get(i));
+				String tempField = getFieldName(column);
 				String field = tempField.substring(0, 1).toUpperCase() + tempField.substring(1);
 				bw.newLine();
 				bw.write("\tpublic " + tempType + " get" + field + "() {");

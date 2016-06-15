@@ -81,6 +81,11 @@ public class DefaultServiceGenerator implements CodeGenerator {
 				bw.newLine();
 				bw.write("import " + config.getBeanPackage() + "." + table.getEntityName() + ";");
 			}
+			//接口所在包
+			if (null != config.getServiceImplExtendClass() && config.getServiceImplExtendClass().trim().length() > 0) {
+				bw.newLine();
+				bw.write("import " + config.getServicePackage() + "." + getServiceInterfaceName(table.getEntityName(), serviceSuffix) + ";");
+			}
 			
 			//类注释
 			CodeGenerateUtil.generateClassNotes(table, bw);
@@ -88,7 +93,9 @@ public class DefaultServiceGenerator implements CodeGenerator {
 			//类声明
 			bw.newLine();
 			if (null != config.getServiceImplExtendClass() && config.getServiceImplExtendClass().trim().length() > 0) {
-				bw.write("public class " + table.getEntityName() + serviceSuffix + serviceImplSuffix + " extends " + (generic ? MessageFormat.format(config.getServiceImplExtendClass().trim(), table.getEntityName()) : config.getServiceImplExtendClass().trim()) + " {");
+				String classDeclaration = "public class " + table.getEntityName() + serviceSuffix + serviceImplSuffix + " extends " + (generic ? MessageFormat.format(config.getServiceImplExtendClass().trim(), table.getEntityName()) : config.getServiceImplExtendClass().trim());
+				classDeclaration += " implements " + getServiceInterfaceName(table.getEntityName(), serviceSuffix);
+				bw.write(classDeclaration + " {");
 			} else {
 				bw.write("public class " + table.getEntityName() + serviceSuffix + serviceImplSuffix + " {");
 			}
@@ -160,9 +167,9 @@ public class DefaultServiceGenerator implements CodeGenerator {
 			//类声明
 			bw.newLine();
 			if (null != config.getServiceExtendClass() && config.getServiceExtendClass().trim().length() > 0) {
-				bw.write("public interface " + table.getEntityName() + serviceSuffix + " extends " + (generic ? MessageFormat.format(config.getServiceExtendClass().trim(), table.getEntityName()) : config.getServiceExtendClass().trim()) + " {");
+				bw.write("public interface " + getServiceInterfaceName(table.getEntityName(), serviceSuffix) + " extends " + (generic ? MessageFormat.format(config.getServiceExtendClass().trim(), table.getEntityName()) : config.getServiceExtendClass().trim()) + " {");
 			} else {
-				bw.write("public interface " + table.getEntityName() + serviceSuffix + " {");
+				bw.write("public interface " + getServiceInterfaceName(table.getEntityName(), serviceSuffix) + " {");
 			}
 			
 			bw.newLine();
@@ -187,5 +194,9 @@ public class DefaultServiceGenerator implements CodeGenerator {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+	
+	private String getServiceInterfaceName(String entityName, String suffix) {
+		return entityName + suffix;
 	}
 }

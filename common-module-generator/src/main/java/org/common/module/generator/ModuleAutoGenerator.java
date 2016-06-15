@@ -95,7 +95,7 @@ public class ModuleAutoGenerator {
 		Table table = extractor.getTableInfo(tableName);
 		//列信息
 		List<Column> columns = extractor.getColumns(tableName);
-		if (null != config.getExcludeFields() && !config.getExcludeFields().isEmpty()) {
+		/*if (null != config.getExcludeFields() && !config.getExcludeFields().isEmpty()) {
 			List<Column> includeColumns = new ArrayList<Column>();
 			for (Column column : columns) {
 				if (!config.getExcludeFields().contains(column.getName())) {	//过滤不需要的列
@@ -103,9 +103,9 @@ public class ModuleAutoGenerator {
 				}
 			}
 			table.setColumns(includeColumns);
-		} else {
+		} else {*/
 			table.setColumns(columns);
-		}
+		//}
 		return table;
 	}
 	

@@ -40,6 +40,10 @@ public class Config {
 	private String beanPackage;
 	/**bean继承的类*/
 	private String beanExtends;
+	/**bean继承的类所在包*/
+	private String beanExtendsPackage;
+	/**bean序列化*/
+	private boolean beanSerialize = true;
 	
 	/**是否生成dao*/
 	private boolean generateDao = false;
@@ -390,6 +394,36 @@ public class Config {
 	public Config setServiceImplExtendClassPackage(
 			String serviceImplExtendClassPackage) {
 		this.serviceImplExtendClassPackage = serviceImplExtendClassPackage;
+		return this;
+	}
+	/**
+	 * 获取bean继承的类所在包
+	 * @return
+	 */
+	public String getBeanExtendsPackage() {
+		return beanExtendsPackage;
+	}
+	/**
+	 * 设置bean继承的类所在包
+	 * @param beanExtendsPackage
+	 */
+	public Config setBeanExtendsPackage(String beanExtendsPackage) {
+		this.beanExtendsPackage = beanExtendsPackage;
+		return this;
+	}
+	/**
+	 * bean序列化
+	 * @return
+	 */
+	public boolean isBeanSerialize() {
+		return beanSerialize;
+	}
+	/**
+	 * bean序列化
+	 * @param beanSerialize
+	 */
+	public Config setBeanSerialize(boolean beanSerialize) {
+		this.beanSerialize = beanSerialize;
 		return this;
 	}
 	
