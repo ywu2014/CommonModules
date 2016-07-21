@@ -32,6 +32,7 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 	private String insertMethod = "save";
 	private String deleteMethod = "remove";
 	private String updateMethod = "update";
+	private String updateMethodWithOptimisticLock = "updateOptLock";
 	private String getMethod = "get";
 	private String listMethod = "list";
 	
@@ -68,6 +69,7 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 			generateDelete(table, bw);
 			//修改
 			generateUpdate(table, bw);
+			generateUpdateWithOptimisticLock(table, bw, config);
 			//查询
 			generateQuery(table, bw);
 			//结束元素
@@ -159,7 +161,7 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 		bw.write("\t\t<where>");
 			for (Column column : table.getColumns()) {
 				bw.newLine();
-				bw.write("\t\t\t<if test=\"" + column.getFieldName() + " != null\">AND " + column.getName() + " = #{" + column.getFieldName() + "}</if>");
+				bw.write("\t\t\t<if test=\"params." + column.getFieldName() + " != null" + (column.getType().startsWith("varchar") ? " and params." + column.getFieldName() + " != ''" : "") + "\">AND " + column.getName() + " = #{params." + column.getFieldName() + "}</if>");
 			}
 		bw.newLine();
 		bw.write("\t\t</where>");
@@ -259,10 +261,21 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 		String resultMapId = getResultMapId(table);
 		bw.write("\t<select id=\"" + this.getMethod + "\" parameterType=\"long\" resultMap=\"" + resultMapId + "\">");
 		bw.newLine();
-		bw.write("\t\t<include refid=\"" + selectFieldId + "\"/>");
-		bw.newLine();
+		bw.write("\t\tSELECT ");
+		
+		//默认查询所有field
+		StringBuilder fields = new StringBuilder();
+		for (Column column : table.getColumns()) {
+			fields.append(column.getName()).append(", ");
+		}
+		fields.deleteCharAt(fields.lastIndexOf(", "));
+		bw.write(fields.toString());
+		
+		//表名
+		bw.write("FROM " + table.getName());
+		
 		String[] idColumnField = getIdColumnAndField(table);
-		bw.write("\t\tWHERE " + idColumnField[0] + " = #{" + idColumnField[1] + "}");
+		bw.write(" WHERE " + idColumnField[0] + " = #{" + idColumnField[1] + "}");
 		
 		bw.newLine();
 		bw.write("\t</select>");
@@ -306,6 +319,63 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 		
 		bw.newLine();
 		bw.write("\t</update>");
+	}
+	
+	/**
+	 * 更新(乐观锁定)
+	 * @param table
+	 * @param bw
+	 * @throws IOException
+	 */
+	private void generateUpdateWithOptimisticLock(Table table, BufferedWriter bw, Config config) throws IOException {
+		boolean generateUpdateWithOptimisticLock = false;
+		String versionFieldName = null;
+		String versionColumnName = null;
+		for (Column column : table.getColumns()) {
+			if (column.getName().equalsIgnoreCase(config.getVersionColumnName())) {
+				generateUpdateWithOptimisticLock = true;
+				versionFieldName = column.getFieldName();
+				versionColumnName = column.getName();
+				break;
+			}
+		}
+		if (generateUpdateWithOptimisticLock) {
+			bw.newLine();
+			bw.newLine();
+			bw.write("\t<!-- 乐观锁更新 -->");
+			
+			bw.newLine();
+			bw.write("\t<update id=\"" + this.updateMethodWithOptimisticLock + "\" parameterType=\"" + table.getEntityName() + "\">");
+			
+			bw.newLine();
+			bw.write("\t\tUPDATE " + table.getName());
+			bw.newLine();
+			
+			//更新字段
+			bw.write("\t\t<set>");
+			bw.newLine();
+			bw.write("\t\t\t<trim suffixOverrides=\",\">");
+			for (Column column : table.getColumns()) {
+				bw.newLine();
+				if (column.getName().equalsIgnoreCase(config.getVersionColumnName())) {
+					bw.write("\t\t\t\t<if test=\"" + versionFieldName + " != null\">" + versionColumnName + " = " + versionColumnName + " + 1,</if>");
+				} else {
+					bw.write("\t\t\t\t<if test=\"" + column.getFieldName() + " != null\">" + column.getName() + " = #{" + column.getFieldName() + "},</if>");
+				}
+			}
+			bw.newLine();
+			bw.write("\t\t\t</trim>");
+			bw.newLine();
+			bw.write("\t\t</set>");
+			
+			//where条件
+			String[] idColumnField = getIdColumnAndField(table);
+			bw.newLine();
+			bw.write("\t\tWHERE " + idColumnField[0] + " = #{" + idColumnField[1] + "} AND " + versionColumnName + " = #{" + versionFieldName + "}");
+			
+			bw.newLine();
+			bw.write("\t</update>");
+		}
 	}
 	
 	/**
@@ -362,7 +432,7 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 		//插入字段
 		for (Column column : table.getColumns()) {
 			bw.newLine();
-			bw.write("\t\t\t<if test=\"" + column.getName() + " != null\">id,</if>");
+			bw.write("\t\t\t<if test=\"" + column.getFieldName() + " != null\">" + column.getName() + ",</if>");
 		}
 		bw.newLine();
 		bw.write("\t\t</trim>");

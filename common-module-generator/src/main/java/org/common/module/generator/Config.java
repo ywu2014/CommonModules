@@ -27,6 +27,10 @@ public class Config {
 	
 	/**表信息抽取器*/
 	private TableInfoExtractor tableInfoExtractor;
+	/**
+	 * 版本控制字段名称
+	 */
+	private String versionColumnName = "VERSION";
 	
 	/***********bean相关参数**********/
 	/**文件生成基准路径*/
@@ -424,6 +428,21 @@ public class Config {
 	 */
 	public Config setBeanSerialize(boolean beanSerialize) {
 		this.beanSerialize = beanSerialize;
+		return this;
+	}
+	/**
+	 * 版本控制字段名称
+	 * @return
+	 */
+	public String getVersionColumnName() {
+		return versionColumnName;
+	}
+	/**
+	 * 版本控制字段名称
+	 * @param versionColumnName
+	 */
+	public Config setVersionColumnName(String versionColumnName) {
+		this.versionColumnName = versionColumnName;
 		return this;
 	}
 	
