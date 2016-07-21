@@ -35,7 +35,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
 	}
 
 	public int updateWithOptimisticLock(T entity) {
-		int count = getMapper().update(entity);
+		//TODO 乐观更新有点问题,需要先查询一次,得到更新前的版本号
+		int count = getMapper().updateOptLock(entity);
 		if (count == 0) {
 			throw new OptimisticLockException();
 		}

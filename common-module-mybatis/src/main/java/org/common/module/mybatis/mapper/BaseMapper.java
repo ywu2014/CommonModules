@@ -44,6 +44,12 @@ public interface BaseMapper<T> {
 	 */
 	int update(T entity);
 	/**
+	 * 乐观更新
+	 * @param entity
+	 * @return
+	 */
+	int updateOptLock(T entity);
+	/**
 	 * 获取列表
 	 * @param params
 	 * @return
