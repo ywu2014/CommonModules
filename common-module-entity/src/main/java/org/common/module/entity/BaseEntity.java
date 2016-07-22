@@ -24,7 +24,7 @@ public class BaseEntity implements Serializable {
 	/**
 	 * 是否删除标记
 	 */
-	protected Integer deleted;
+	protected Integer deleted = 0;
 	
 	/**
 	 * 版本号,有些持久化框架用于乐观锁定

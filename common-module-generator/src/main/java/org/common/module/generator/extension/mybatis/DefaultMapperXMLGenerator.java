@@ -71,7 +71,7 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 			generateUpdate(table, bw);
 			generateUpdateWithOptimisticLock(table, bw, config);
 			//查询
-			generateQuery(table, bw);
+			generateQuery(table, bw, config);
 			//结束元素
 			bw.newLine();
 			bw.write("</mapper>");
@@ -95,14 +95,14 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 	 * @param bw
 	 * @throws IOException
 	 */
-	private void generateQuery(Table table, BufferedWriter bw) throws IOException {
+	private void generateQuery(Table table, BufferedWriter bw, Config config) throws IOException {
 		String selectFieldId = getSelectFieldId(table);
 		String whereId = getWhereId(table);
 		String orderById = getOrderById(table);
 		//查询字段
 		generateQuerySelectFields(table, selectFieldId, bw);
 		//where条件
-		generateQueryWhere(table, whereId, bw);
+		generateQueryWhere(table, whereId, bw, config);
 		//排序
 		generateQueryOrderBy(table, orderById, bw);
 		//根据主键查询
@@ -150,7 +150,14 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 	 * @param bw
 	 * @throws IOException
 	 */
-	private void generateQueryWhere(Table table, String whereId, BufferedWriter bw) throws IOException {
+	private void generateQueryWhere(Table table, String whereId, BufferedWriter bw, Config config) throws IOException {
+		String versionColumnName = null;
+		for (Column column : table.getColumns()) {
+			if (column.getName().equalsIgnoreCase(config.getVersionColumnName().trim())) {
+				versionColumnName = column.getName();
+				break;
+			}
+		}
 		bw.newLine();
 		bw.newLine();
 		bw.write("\t<!-- where条件 -->");
@@ -160,6 +167,11 @@ public class DefaultMapperXMLGenerator implements CodeGenerator {
 		bw.newLine();
 		bw.write("\t\t<where>");
 			for (Column column : table.getColumns()) {
+				if (null != versionColumnName && !"".equals(versionColumnName)) {
+					if (column.getName().equalsIgnoreCase(versionColumnName)) {
+						continue;
+					}
+				}
 				bw.newLine();
 				bw.write("\t\t\t<if test=\"params." + column.getFieldName() + " != null" + (column.getType().startsWith("varchar") ? " and params." + column.getFieldName() + " != ''" : "") + "\">AND " + column.getName() + " = #{params." + column.getFieldName() + "}</if>");
 			}
